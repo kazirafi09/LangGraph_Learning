@@ -1,14 +1,19 @@
 from dotenv import load_dotenv
 load_dotenv()
-
-from langchain_google_genai import ChatGoogleGenerativeAI
+import logging
+import warnings
+from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, MessagesState, START, END
 
-llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash-lite")
+warnings.filterwarnings("ignore")
+logging.getLogger("google.genai").setLevel(logging.ERROR)
+logging.getLogger("google").setLevel(logging.ERROR)
+
+llm = init_chat_model(model="gemini-3.5-flash-lite", model_provider="google_genai")
 
 def draft_node(state: MessagesState):
-    prompt = "Write a 3 line poem or a 3 line joke"
+    prompt = "Write a 10 line paragraph about 'AI'."
     response = llm.invoke([HumanMessage(content=prompt)])
     return {"messages": [response]}
 
